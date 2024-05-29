@@ -8,7 +8,6 @@ import (
 	"io"
 	"os"
 	"os/exec"
-	"syscall"
 )
 
 type RunningProcess struct {
@@ -34,7 +33,7 @@ func (p *RunningProcess) Stderr() string {
 func (p *RunningProcess) Kill() error {
 	p.stdErrReader.Close()
 	p.stdOutReader.Close()
-	return syscall.Kill(-p.cmd.Process.Pid, syscall.SIGKILL)
+	return p.cmd.Process.Signal(os.Interrupt)
 }
 
 type CmdOpt func(*exec.Cmd)
@@ -50,8 +49,6 @@ func ExecuteCommand(ctx context.Context, cmdName string, args []string, opts ...
 	for _, opt := range opts {
 		opt(cmd)
 	}
-
-	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 
 	stdOutReader, err := cmd.StdoutPipe()
 	if err != nil {

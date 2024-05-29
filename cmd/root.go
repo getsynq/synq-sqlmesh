@@ -7,6 +7,7 @@ import (
 	"github.com/getsynq/synq-sqlmesh/process"
 	"github.com/getsynq/synq-sqlmesh/sqlmesh"
 	"github.com/getsynq/synq-sqlmesh/synq"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"net/url"
 	"os"
@@ -32,7 +33,7 @@ var collectCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		err := WithSqlMesh(func(baseUrl url.URL) error {
-			fmt.Println("SqlMesh base URL:", baseUrl.String())
+			logrus.Info("SqlMesh base URL:", baseUrl.String())
 
 			output, err := sqlmesh.CollectMetadata(baseUrl)
 			if err != nil {
