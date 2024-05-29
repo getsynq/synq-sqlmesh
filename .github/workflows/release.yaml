@@ -1,0 +1,40 @@
+defaults:
+  run:
+    shell: bash
+env:
+  GONOPROXY: github.com/getsynq/*
+  GONOSUMDB: github.com/getsynq/*
+  GOPRIVATE: github.com/getsynq/*
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: 1.21
+        go-version-file: 'go.mod'
+    - name: Configure git
+      run: git config --global --add url."git@github.com:".insteadOf "https://github.com/"
+    - name: Build
+      run: |
+        go generate
+        GOOS=darwin CGO_ENABLED=0 GOARCH=arm64 go build -o synq-sqlmesh-arm64-darwin main.go
+        GOOS=darwin CGO_ENABLED=0 GOARCH=amd64 go build -o synq-sqlmesh-amd64-darwin main.go
+        GOOS=linux CGO_ENABLED=0 GOARCH=amd64 go build -o synq-sqlmesh-amd64-linux main.go
+        GOOS=windows CGO_ENABLED=0 GOARCH=amd64 go build -o synq-sqlmesh-amd64-windows.exe main.go
+    - name: Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+         synq-sqlmesh-arm64-darwin
+         synq-sqlmesh-amd64-darwin
+         synq-sqlmesh-amd64-linux
+         synq-sqlmesh-amd64-windows.exe
+name: release synq-dbt
+"on":
+  push:
+    tags:
+      - v*.*.*
