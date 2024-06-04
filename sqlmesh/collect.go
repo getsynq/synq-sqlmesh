@@ -1,35 +1,27 @@
 package sqlmesh
 
 import (
+	ingestsqlmeshv1 "buf.build/gen/go/getsynq/api/protocolbuffers/go/synq/ingest/sqlmesh/v1"
 	"encoding/json"
 	"github.com/sirupsen/logrus"
 	"net/url"
 	"strings"
 )
 
-func NewSqlMeshMetadata() *SqlMeshMetadata {
-	return &SqlMeshMetadata{
-		ModelDetails: make(map[string]json.RawMessage),
-		ModelLineage: make(map[string]json.RawMessage),
+func NewSqlMeshMetadata() *ingestsqlmeshv1.IngestMetadataRequest {
+	return &ingestsqlmeshv1.IngestMetadataRequest{
+		ModelDetails: make(map[string][]byte),
+		ModelLineage: make(map[string][]byte),
 	}
 }
 
-type SqlMeshMetadata struct {
-	Meta         json.RawMessage            `json:"meta"`
-	Models       json.RawMessage            `json:"models"`
-	ModelDetails map[string]json.RawMessage `json:"model_details"`
-	ModelLineage map[string]json.RawMessage `json:"model_lineage"`
-	Files        json.RawMessage            `json:"files"`
-	Environments json.RawMessage            `json:"environments"`
-}
-
-func CollectMetadata(url url.URL) (*SqlMeshMetadata, error) {
+func CollectMetadata(url url.URL) (*ingestsqlmeshv1.IngestMetadataRequest, error) {
 
 	api := NewAPIClient(url)
 
 	res := NewSqlMeshMetadata()
 	var err error
-	res.Meta, err = api.GetMeta()
+	res.ApiMeta, err = api.GetMeta()
 	logError(err, "Failed to get meta information")
 	res.Models, err = api.GetModels()
 	logError(err, "Failed to get models information")

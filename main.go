@@ -4,6 +4,7 @@ import (
 	"github.com/getsynq/synq-sqlmesh/cmd"
 	"github.com/sirupsen/logrus"
 	easy "github.com/t-tomalak/logrus-easy-formatter"
+	"os"
 )
 
 //go:generate bash bin/version.sh
@@ -14,5 +15,9 @@ func main() {
 		LogFormat:       "%time%  %msg%\n",
 	})
 
-	cmd.Execute()
+	if err := cmd.Execute(); err != nil {
+		logrus.WithError(err).Error("Error executing command")
+		os.Exit(1)
+	}
+	os.Exit(0)
 }

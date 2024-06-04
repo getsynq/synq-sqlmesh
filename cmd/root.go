@@ -53,6 +53,36 @@ var collectCmd = &cobra.Command{
 	},
 }
 
+var uploadCmd = &cobra.Command{
+	Use:   "upload",
+	Short: "Collect metadata information from SqlMesh and send to Synq API",
+	Args:  cobra.ExactArgs(0),
+	Run: func(cmd *cobra.Command, args []string) {
+		err := WithSqlMesh(func(baseUrl url.URL) error {
+			logrus.Info("SqlMesh base URL:", baseUrl.String())
+
+			output, err := sqlmesh.CollectMetadata(baseUrl)
+			if err != nil {
+				return err
+			}
+
+			if SynqApiToken == "" {
+				return fmt.Errorf("SYNQ_TOKEN environment variable is not set")
+			}
+
+			if err := synq.UploadMetadata(cmd.Context(), output, SynqApiEndpoint, SynqApiToken); err != nil {
+				return err
+			}
+
+			return nil
+		})
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+	},
+}
+
 func WithSqlMesh(f func(baseUrl url.URL) error) error {
 	baseUrl := url.URL{
 		Host:   fmt.Sprintf("%s:%d", SqlMeshUiHost, SqlMeshUiPort),
@@ -98,6 +128,7 @@ func init() {
 
 	rootCmd.AddCommand(collectCmd)
 	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(uploadCmd)
 
 }
 
