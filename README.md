@@ -47,3 +47,14 @@ Flags:
 
 Use "synq-sqlmesh [command] --help" for more information about a command.
 ```
+
+
+## Building from source code
+
+Make sure at least golang 1.21 is installed and do:
+
+```bash
+go generate
+go build -i synq-sqlmesh
+./synq-sqlmesh version
+```
