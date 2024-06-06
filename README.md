@@ -55,6 +55,6 @@ Make sure at least golang 1.21 is installed and do:
 
 ```bash
 go generate
-go build -i synq-sqlmesh
+go build -o synq-sqlmesh
 ./synq-sqlmesh version
 ```
