@@ -4,6 +4,7 @@ import (
 	ingestsqlmeshv1 "buf.build/gen/go/getsynq/api/protocolbuffers/go/synq/ingest/sqlmesh/v1"
 	"encoding/json"
 	"github.com/sirupsen/logrus"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"net/url"
 	"strings"
 )
@@ -12,6 +13,7 @@ func NewSQLMeshMetadata() *ingestsqlmeshv1.IngestMetadataRequest {
 	return &ingestsqlmeshv1.IngestMetadataRequest{
 		ModelDetails: make(map[string][]byte),
 		ModelLineage: make(map[string][]byte),
+		StateAt:      timestamppb.Now(),
 	}
 }
 
