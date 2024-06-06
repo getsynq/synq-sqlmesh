@@ -6,8 +6,15 @@ synq-sqlmesh is a client application to integrate locally running SqlMesh to Syn
 
 If you have Golang installed, you can build the binary yourself, otherwise download appropriate binary from the [releases screen](https://github.com/getsynq/synq-sqlmesh/releases) (darwin == macOS).
 
+`synq-sqlmesh` uses `web` module of `sqlmesh` to collect metadata. It was tested with versions ` >= 0.96.x`. If you do not have `web` module installed do
 
-Assuming `sqlmesh` command available in the `PATH`:
+```bash
+pip install 'sqlmesh[web]
+```
+
+All commands assume `sqlmesh` command is available in the `PATH`. If that is not the case, `--sqlmesh-cmd` could be used to point synq-sqlmesh to proper location.
+
+### Dump metadata for inspection
 
 ```bash
 cd sqlmesh-project
