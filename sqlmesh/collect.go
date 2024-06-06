@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func NewSqlMeshMetadata() *ingestsqlmeshv1.IngestMetadataRequest {
+func NewSQLMeshMetadata() *ingestsqlmeshv1.IngestMetadataRequest {
 	return &ingestsqlmeshv1.IngestMetadataRequest{
 		ModelDetails: make(map[string][]byte),
 		ModelLineage: make(map[string][]byte),
@@ -19,7 +19,7 @@ func CollectMetadata(url url.URL) (*ingestsqlmeshv1.IngestMetadataRequest, error
 
 	api := NewAPIClient(url)
 
-	res := NewSqlMeshMetadata()
+	res := NewSQLMeshMetadata()
 	var err error
 	res.ApiMeta, err = api.GetMeta()
 	logError(err, "Failed to get meta information")

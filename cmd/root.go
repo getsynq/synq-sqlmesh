@@ -16,7 +16,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "synq-sqlmesh",
-	Short: "Small utility to collect SqlMesh metadata information and upload it to Synq",
+	Short: "Small utility to collect SQLMesh metadata information and upload it to Synq",
 }
 
 var versionCmd = &cobra.Command{
@@ -29,11 +29,11 @@ var versionCmd = &cobra.Command{
 
 var collectCmd = &cobra.Command{
 	Use:   "collect",
-	Short: "Collect metadata information from SqlMesh and store to the file",
+	Short: "Collect metadata information from SQLMesh and store to the file",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		err := WithSqlMesh(func(baseUrl url.URL) error {
-			logrus.Info("SqlMesh base URL:", baseUrl.String())
+		err := WithSQLMesh(func(baseUrl url.URL) error {
+			logrus.Info("SQLMesh base URL:", baseUrl.String())
 
 			output, err := sqlmesh.CollectMetadata(baseUrl)
 			if err != nil {
@@ -55,11 +55,11 @@ var collectCmd = &cobra.Command{
 
 var uploadCmd = &cobra.Command{
 	Use:   "upload",
-	Short: "Collect metadata information from SqlMesh and send to Synq API",
+	Short: "Collect metadata information from SQLMesh and send to Synq API",
 	Args:  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
-		err := WithSqlMesh(func(baseUrl url.URL) error {
-			logrus.Info("SqlMesh base URL:", baseUrl.String())
+		err := WithSQLMesh(func(baseUrl url.URL) error {
+			logrus.Info("SQLMesh base URL:", baseUrl.String())
 
 			output, err := sqlmesh.CollectMetadata(baseUrl)
 			if err != nil {
@@ -83,20 +83,20 @@ var uploadCmd = &cobra.Command{
 	},
 }
 
-func WithSqlMesh(f func(baseUrl url.URL) error) error {
+func WithSQLMesh(f func(baseUrl url.URL) error) error {
 	baseUrl := url.URL{
-		Host:   fmt.Sprintf("%s:%d", SqlMeshUiHost, SqlMeshUiPort),
+		Host:   fmt.Sprintf("%s:%d", SQLMeshUiHost, SQLMeshUiPort),
 		Scheme: "http",
 	}
-	if SqlMeshUiStart {
+	if SQLMeshUiStart {
 		ctx, cancelFn := context.WithCancel(context.Background())
 		defer cancelFn()
-		sqlMeshProcess, err := process.ExecuteCommand(ctx, SqlMesh, []string{"ui", "--host", SqlMeshUiHost, "--port", fmt.Sprintf("%d", SqlMeshUiPort)}, process.WithDir(SqlMeshProjectDir))
+		sqlMeshProcess, err := process.ExecuteCommand(ctx, SQLMesh, []string{"ui", "--host", SQLMeshUiHost, "--port", fmt.Sprintf("%d", SQLMeshUiPort)}, process.WithDir(SQLMeshProjectDir))
 		if err != nil {
 			return err
 		}
 
-		sqlmesh.WaitForSqlMeshToStart(baseUrl)
+		sqlmesh.WaitForSQLMeshToStart(baseUrl)
 
 		err = f(baseUrl)
 		_ = sqlMeshProcess.Kill()
@@ -111,20 +111,20 @@ func WithSqlMesh(f func(baseUrl url.URL) error) error {
 
 var SynqApiEndpoint string = "https://developer.synq.io/"
 var SynqApiToken string = os.Getenv("SYNQ_TOKEN")
-var SqlMesh string = "sqlmesh"
-var SqlMeshProjectDir string = "."
-var SqlMeshUiStart bool = true
-var SqlMeshUiHost string = "localhost"
-var SqlMeshUiPort int = 8080
+var SQLMesh string = "sqlmesh"
+var SQLMeshProjectDir string = "."
+var SQLMeshUiStart bool = true
+var SQLMeshUiHost string = "localhost"
+var SQLMeshUiPort int = 8080
 
 func init() {
 	rootCmd.PersistentFlags().StringVar(&SynqApiToken, "synq-token", SynqApiToken, "Synq API token")
 	rootCmd.PersistentFlags().StringVar(&SynqApiEndpoint, "synq-endpoint", SynqApiEndpoint, "Synq API endpoint URL")
-	rootCmd.PersistentFlags().StringVar(&SqlMesh, "sqlmesh-cmd", SqlMesh, "SqlMesh launcher location")
-	rootCmd.PersistentFlags().StringVar(&SqlMeshProjectDir, "sqlmesh-project-dir", SqlMeshProjectDir, "Location of SqlMesh project directory")
-	rootCmd.PersistentFlags().BoolVar(&SqlMeshUiStart, "sqlmesh-ui-start", SqlMeshUiStart, "Launch and control SqlMesh UI process automatically")
-	rootCmd.PersistentFlags().StringVar(&SqlMeshUiHost, "sqlmesh-ui-host", SqlMeshUiHost, "SqlMesh UI host")
-	rootCmd.PersistentFlags().IntVar(&SqlMeshUiPort, "sqlmesh-ui-port", SqlMeshUiPort, "SqlMesh UI port")
+	rootCmd.PersistentFlags().StringVar(&SQLMesh, "sqlmesh-cmd", SQLMesh, "SQLMesh launcher location")
+	rootCmd.PersistentFlags().StringVar(&SQLMeshProjectDir, "sqlmesh-project-dir", SQLMeshProjectDir, "Location of SQLMesh project directory")
+	rootCmd.PersistentFlags().BoolVar(&SQLMeshUiStart, "sqlmesh-ui-start", SQLMeshUiStart, "Launch and control SQLMesh UI process automatically")
+	rootCmd.PersistentFlags().StringVar(&SQLMeshUiHost, "sqlmesh-ui-host", SQLMeshUiHost, "SQLMesh UI host")
+	rootCmd.PersistentFlags().IntVar(&SQLMeshUiPort, "sqlmesh-ui-port", SQLMeshUiPort, "SQLMesh UI port")
 
 	rootCmd.AddCommand(collectCmd)
 	rootCmd.AddCommand(versionCmd)

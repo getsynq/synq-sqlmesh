@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func WaitForSqlMeshToStart(url url.URL) {
+func WaitForSQLMeshToStart(url url.URL) {
 
 	logrus.Info("Waiting for sqlmesh to start")
 	api := NewAPIClient(url)
@@ -17,9 +17,9 @@ func WaitForSqlMeshToStart(url url.URL) {
 		if err == nil {
 			return
 		}
-		logrus.WithError(err).Error("Failed to get health of SqlMesh api")
+		logrus.WithError(err).Error("Failed to get health of SQLMesh api")
 		time.Sleep(1 * time.Second)
 	}
-	logrus.Error("SqlMesh did not start in time")
+	logrus.Error("SQLMesh did not start in time")
 	os.Exit(1)
 }
