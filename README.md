@@ -1,5 +1,5 @@
 # synq-sqlmesh
-synq-sqlmesh is a client application to integrate locally running SqlMesh to Synq
+synq-sqlmesh is a client application to integrate locally running SQLMesh to Synq
 
 
 ## How to use
@@ -33,22 +33,22 @@ synq-sqlmesh upload
 
 ```bash
 ❯ synq-sqlmesh --help
-Small utility to collect SqlMesh metadata information and upload it to Synq
+Small utility to collect SQLMesh metadata information and upload it to Synq
 
 Usage:
   synq-sqlmesh [command]
 
 Available Commands:
-  collect     Collect metadata information from SqlMesh and store to the file
-  upload      Collect metadata information from SqlMesh and send to Synq API
+  collect     Collect metadata information from SQLMesh and store to the file
+  upload      Collect metadata information from SQLMesh and send to Synq API
 
 Flags:
   -h, --help                         help for synq-sqlmesh
-      --sqlmesh-cmd string           SqlMesh launcher location (default "sqlmesh")
-      --sqlmesh-project-dir string   Location of SqlMesh project directory (default ".")
-      --sqlmesh-ui-host string       SqlMesh UI host (default "localhost")
-      --sqlmesh-ui-port int          SqlMesh UI port (default 8080)
-      --sqlmesh-ui-start             Launch and control SqlMesh UI process automatically (default true)
+      --sqlmesh-cmd string           SQLMesh launcher location (default "sqlmesh")
+      --sqlmesh-project-dir string   Location of SQLMesh project directory (default ".")
+      --sqlmesh-ui-host string       SQLMesh UI host (default "localhost")
+      --sqlmesh-ui-port int          SQLMesh UI port (default 8080)
+      --sqlmesh-ui-start             Launch and control SQLMesh UI process automatically (default true)
       --synq-endpoint string         Synq API endpoint URL (default "https://developer.synq.io/")
       --synq-token string            Synq API token
 
