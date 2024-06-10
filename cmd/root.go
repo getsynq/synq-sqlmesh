@@ -35,7 +35,7 @@ var collectCmd = &cobra.Command{
 		err := WithSQLMesh(func(baseUrl url.URL) error {
 			logrus.Info("SQLMesh base URL:", baseUrl.String())
 
-			output, err := sqlmesh.CollectMetadata(baseUrl)
+			output, err := sqlmesh.CollectMetadata(baseUrl, createFileContentGlobFilter())
 			if err != nil {
 				return err
 			}
@@ -61,7 +61,7 @@ var uploadCmd = &cobra.Command{
 		err := WithSQLMesh(func(baseUrl url.URL) error {
 			logrus.Info("SQLMesh base URL:", baseUrl.String())
 
-			output, err := sqlmesh.CollectMetadata(baseUrl)
+			output, err := sqlmesh.CollectMetadata(baseUrl, createFileContentGlobFilter())
 			if err != nil {
 				return err
 			}
@@ -81,6 +81,13 @@ var uploadCmd = &cobra.Command{
 			os.Exit(1)
 		}
 	},
+}
+
+func createFileContentGlobFilter() sqlmesh.GlobFilter {
+	if SQLMeshCollectFileContent {
+		return sqlmesh.NewGlobFilter(SQLMeshCollectFileContentIncludePattern, SQLMeshCollectFileContentExcludePattern)
+	}
+	return sqlmesh.NewExcludeEverythingGlobFilter()
 }
 
 func WithSQLMesh(f func(baseUrl url.URL) error) error {
@@ -116,6 +123,9 @@ var SQLMeshProjectDir string = "."
 var SQLMeshUiStart bool = true
 var SQLMeshUiHost string = "localhost"
 var SQLMeshUiPort int = 8080
+var SQLMeshCollectFileContent = false
+var SQLMeshCollectFileContentIncludePattern = "external_models.yaml,models/**.sql,models/**.py,audits/**.sql,tests/**.yaml"
+var SQLMeshCollectFileContentExcludePattern = "*.log"
 
 func init() {
 	rootCmd.PersistentFlags().StringVar(&SynqApiToken, "synq-token", SynqApiToken, "Synq API token")
@@ -125,6 +135,9 @@ func init() {
 	rootCmd.PersistentFlags().BoolVar(&SQLMeshUiStart, "sqlmesh-ui-start", SQLMeshUiStart, "Launch and control SQLMesh UI process automatically")
 	rootCmd.PersistentFlags().StringVar(&SQLMeshUiHost, "sqlmesh-ui-host", SQLMeshUiHost, "SQLMesh UI host")
 	rootCmd.PersistentFlags().IntVar(&SQLMeshUiPort, "sqlmesh-ui-port", SQLMeshUiPort, "SQLMesh UI port")
+	rootCmd.PersistentFlags().BoolVar(&SQLMeshCollectFileContent, "sqlmesh-collect-file-content", SQLMeshCollectFileContent, "If content of the project files should be collected")
+	rootCmd.PersistentFlags().StringVar(&SQLMeshCollectFileContentIncludePattern, "sqlmesh-collect-file-content-include", SQLMeshCollectFileContentIncludePattern, "File patterns to include content")
+	rootCmd.PersistentFlags().StringVar(&SQLMeshCollectFileContentExcludePattern, "sqlmesh-collect-file-content-exclude", SQLMeshCollectFileContentExcludePattern, "File patterns to exclude content")
 
 	rootCmd.AddCommand(collectCmd)
 	rootCmd.AddCommand(versionCmd)

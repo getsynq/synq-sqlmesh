@@ -3,8 +3,8 @@ module github.com/getsynq/synq-sqlmesh
 go 1.21
 
 require (
-	buf.build/gen/go/getsynq/api/grpc/go v1.4.0-20240606210337-699ec36b7983.1
-	buf.build/gen/go/getsynq/api/protocolbuffers/go v1.34.1-20240606210337-699ec36b7983.1
+	buf.build/gen/go/getsynq/api/grpc/go v1.4.0-20240610094605-d52d1beff75d.1
+	buf.build/gen/go/getsynq/api/protocolbuffers/go v1.34.1-20240610094605-d52d1beff75d.1
 	github.com/samber/lo v1.39.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.8.0

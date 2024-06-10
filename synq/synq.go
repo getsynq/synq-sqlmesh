@@ -16,22 +16,28 @@ import (
 )
 
 type ingestMetadataRequest struct {
-	ApiMeta      json.RawMessage            `json:"api_meta"`
-	Models       json.RawMessage            `json:"models"`
-	ModelDetails map[string]json.RawMessage `json:"model_details"`
-	ModelLineage map[string]json.RawMessage `json:"model_lineage"`
-	Files        json.RawMessage            `json:"files"`
-	Environments json.RawMessage            `json:"environments"`
+	ApiMeta           json.RawMessage            `json:"api_meta"`
+	Models            json.RawMessage            `json:"models"`
+	ModelDetails      map[string]json.RawMessage `json:"model_details"`
+	ModelLineage      map[string]json.RawMessage `json:"model_lineage"`
+	Files             json.RawMessage            `json:"files"`
+	Environments      json.RawMessage            `json:"environments"`
+	FileContent       map[string]json.RawMessage `json:"file_content"`
+	UploaderVersion   string                     `json:"uploader_version"`
+	UploaderBuildTime string                     `json:"uploader_build_time"`
 }
 
 func DumpMetadata(output *ingestsqlmeshv1.IngestMetadataRequest, filename string) error {
 	outputRaw := ingestMetadataRequest{
-		ApiMeta:      output.ApiMeta,
-		Models:       output.Models,
-		ModelDetails: lo.MapValues(output.ModelDetails, func(v []byte, k string) json.RawMessage { return v }),
-		ModelLineage: lo.MapValues(output.ModelLineage, func(v []byte, k string) json.RawMessage { return v }),
-		Files:        output.Files,
-		Environments: output.Environments,
+		ApiMeta:           output.ApiMeta,
+		Models:            output.Models,
+		ModelDetails:      lo.MapValues(output.ModelDetails, func(v []byte, k string) json.RawMessage { return v }),
+		ModelLineage:      lo.MapValues(output.ModelLineage, func(v []byte, k string) json.RawMessage { return v }),
+		Files:             output.Files,
+		Environments:      output.Environments,
+		FileContent:       lo.MapValues(output.FileContent, func(v []byte, k string) json.RawMessage { return v }),
+		UploaderVersion:   output.UploaderVersion,
+		UploaderBuildTime: output.UploaderBuildTime,
 	}
 
 	asJson, err := json.MarshalIndent(outputRaw, "", "  ")

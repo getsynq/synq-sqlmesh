@@ -13,7 +13,22 @@ type Api interface {
 	GetLineage(modelName string) (json.RawMessage, error)
 	GetEnvironments() (json.RawMessage, error)
 	GetFiles() (json.RawMessage, error)
+	GetFileContent(filePath string) (json.RawMessage, error)
 	Health() (json.RawMessage, error)
+}
+
+type Directory struct {
+	Name        string      `json:"name"`
+	Path        string      `json:"path"`
+	Directories []Directory `json:"directories,omitempty"`
+	Files       []File      `json:"files,omitempty"`
+}
+
+type File struct {
+	Name      string  `json:"name"`
+	Path      string  `json:"path"`
+	Extension *string `json:"extension,omitempty"`
+	Content   *string `json:"content,omitempty"`
 }
 
 func NewAPIClient(url url.URL) Api {
@@ -97,6 +112,17 @@ func (a ApiImpl) GetEnvironments() (json.RawMessage, error) {
 
 func (a ApiImpl) GetFiles() (json.RawMessage, error) {
 	statusCode, body, err := a.c.Get(nil, a.url("api", "files"))
+	if err != nil {
+		return nil, err
+	}
+	if statusCode != fasthttp.StatusOK {
+		return nil, err
+	}
+	return body, nil
+}
+
+func (a ApiImpl) GetFileContent(filePath string) (json.RawMessage, error) {
+	statusCode, body, err := a.c.Get(nil, a.url("api", "files", filePath))
 	if err != nil {
 		return nil, err
 	}
