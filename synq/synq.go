@@ -13,6 +13,7 @@ import (
 	"google.golang.org/grpc/credentials"
 	"net/url"
 	"os"
+	"time"
 )
 
 type IngestMetadataRequestDump struct {
@@ -25,6 +26,7 @@ type IngestMetadataRequestDump struct {
 	FileContent       map[string]json.RawMessage `json:"file_content"`
 	UploaderVersion   string                     `json:"uploader_version"`
 	UploaderBuildTime string                     `json:"uploader_build_time"`
+	StateAt           time.Time                  `json:"state_at"`
 }
 
 func DumpMetadata(output *ingestsqlmeshv1.IngestMetadataRequest, filename string) error {
@@ -38,6 +40,7 @@ func DumpMetadata(output *ingestsqlmeshv1.IngestMetadataRequest, filename string
 		FileContent:       lo.MapValues(output.FileContent, func(v []byte, k string) json.RawMessage { return v }),
 		UploaderVersion:   output.UploaderVersion,
 		UploaderBuildTime: output.UploaderBuildTime,
+		StateAt:           output.StateAt.AsTime(),
 	}
 
 	asJson, err := json.MarshalIndent(outputRaw, "", "  ")
