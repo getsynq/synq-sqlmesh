@@ -15,7 +15,7 @@ import (
 	"os"
 )
 
-type ingestMetadataRequest struct {
+type IngestMetadataRequestDump struct {
 	ApiMeta           json.RawMessage            `json:"api_meta"`
 	Models            json.RawMessage            `json:"models"`
 	ModelDetails      map[string]json.RawMessage `json:"model_details"`
@@ -28,7 +28,7 @@ type ingestMetadataRequest struct {
 }
 
 func DumpMetadata(output *ingestsqlmeshv1.IngestMetadataRequest, filename string) error {
-	outputRaw := ingestMetadataRequest{
+	outputRaw := IngestMetadataRequestDump{
 		ApiMeta:           output.ApiMeta,
 		Models:            output.Models,
 		ModelDetails:      lo.MapValues(output.ModelDetails, func(v []byte, k string) json.RawMessage { return v }),
