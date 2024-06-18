@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/getsynq/synq-sqlmesh/build"
+	"github.com/getsynq/synq-sqlmesh/git"
 	"github.com/getsynq/synq-sqlmesh/process"
 	"github.com/getsynq/synq-sqlmesh/sqlmesh"
 	"github.com/getsynq/synq-sqlmesh/synq"
@@ -32,6 +33,9 @@ var collectCmd = &cobra.Command{
 	Short: "Collect metadata information from SQLMesh and store to the file",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+
+		gitContext := git.CollectGitContext(cmd.Context(), SQLMeshProjectDir)
+
 		err := WithSQLMesh(func(baseUrl url.URL) error {
 			logrus.Info("SQLMesh base URL:", baseUrl.String())
 
@@ -39,6 +43,7 @@ var collectCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
+			output.GitContext = gitContext
 
 			if err := synq.DumpMetadata(output, args[0]); err != nil {
 				return err
@@ -58,6 +63,9 @@ var uploadCmd = &cobra.Command{
 	Short: "Collect metadata information from SQLMesh and send to Synq API",
 	Args:  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
+
+		gitContext := git.CollectGitContext(cmd.Context(), SQLMeshProjectDir)
+
 		err := WithSQLMesh(func(baseUrl url.URL) error {
 			logrus.Info("SQLMesh base URL:", baseUrl.String())
 
@@ -65,6 +73,7 @@ var uploadCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
+			output.GitContext = gitContext
 
 			if SynqApiToken == "" {
 				return fmt.Errorf("SYNQ_TOKEN environment variable is not set")

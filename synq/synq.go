@@ -16,6 +16,12 @@ import (
 	"time"
 )
 
+type GitContextDump struct {
+	CloneUrl  string `json:"clone_url"`
+	Branch    string `json:"branch"`
+	CommitSha string `json:"commit_sha"`
+}
+
 type IngestMetadataRequestDump struct {
 	ApiMeta           json.RawMessage            `json:"api_meta"`
 	Models            json.RawMessage            `json:"models"`
@@ -27,6 +33,7 @@ type IngestMetadataRequestDump struct {
 	UploaderVersion   string                     `json:"uploader_version"`
 	UploaderBuildTime string                     `json:"uploader_build_time"`
 	StateAt           time.Time                  `json:"state_at"`
+	GitContext        *GitContextDump            `json:"git_context"`
 }
 
 func DumpMetadata(output *ingestsqlmeshv1.IngestMetadataRequest, filename string) error {
@@ -41,6 +48,14 @@ func DumpMetadata(output *ingestsqlmeshv1.IngestMetadataRequest, filename string
 		UploaderVersion:   output.UploaderVersion,
 		UploaderBuildTime: output.UploaderBuildTime,
 		StateAt:           output.StateAt.AsTime(),
+	}
+
+	if output.GitContext != nil {
+		outputRaw.GitContext = &GitContextDump{
+			CloneUrl:  output.GitContext.CloneUrl,
+			Branch:    output.GitContext.Branch,
+			CommitSha: output.GitContext.CommitSha,
+		}
 	}
 
 	asJson, err := json.MarshalIndent(outputRaw, "", "  ")

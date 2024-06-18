@@ -49,7 +49,6 @@ func ExecuteCommand(ctx context.Context, cmdName string, args []string, opts ...
 	for _, opt := range opts {
 		opt(cmd)
 	}
-
 	stdOutReader, err := cmd.StdoutPipe()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "error creating StdoutPipe for Cmd", err)
