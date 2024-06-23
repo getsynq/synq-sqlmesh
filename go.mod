@@ -5,6 +5,7 @@ go 1.21
 require (
 	buf.build/gen/go/getsynq/api/grpc/go v1.4.0-20240618221816-2eaa79a347e1.1
 	buf.build/gen/go/getsynq/api/protocolbuffers/go v1.34.2-20240618221816-2eaa79a347e1.2
+	github.com/djherbis/times v1.6.0
 	github.com/samber/lo v1.39.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.8.1

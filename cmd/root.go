@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	sqlmeshv1 "buf.build/gen/go/getsynq/api/protocolbuffers/go/synq/ingest/sqlmesh/v1"
 	"context"
 	"fmt"
 	"github.com/getsynq/synq-sqlmesh/build"
@@ -92,6 +93,74 @@ var uploadCmd = &cobra.Command{
 	},
 }
 
+var uploadAuditCmd = &cobra.Command{
+	Use:   "upload_audit",
+	Short: "Sends to Synq output of `audit` command",
+	Args:  cobra.ExactArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+
+		gitContext := git.CollectGitContext(cmd.Context(), SQLMeshProjectDir)
+		output := &sqlmeshv1.IngestExecutionRequest{
+			Command:    []string{"sqlmesh", "audit"},
+			GitContext: gitContext,
+		}
+		output.UploaderVersion = strings.TrimSpace(fmt.Sprintf("synq-sqlmesh/%s", build.Version))
+		output.UploaderBuildTime = strings.TrimSpace(build.Time)
+
+		for _, fileArg := range args {
+			err := sqlmesh.CollectAuditLog(output, fileArg)
+			if err != nil {
+				logrus.WithError(err).Error("Failed to collect audit log")
+				os.Exit(1)
+			}
+		}
+
+		if SynqApiToken == "" {
+			logrus.Error("SYNQ_TOKEN environment variable is not set")
+			os.Exit(1)
+		}
+
+		if err := synq.UploadExecutionLog(cmd.Context(), output, SynqApiEndpoint, SynqApiToken); err != nil {
+			logrus.WithError(err).Error("Failed to upload execution log")
+			os.Exit(1)
+		}
+	},
+}
+
+var uploadRunCmd = &cobra.Command{
+	Use:   "upload_run",
+	Short: "Sends to Synq output of `run` command",
+	Args:  cobra.ExactArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+
+		gitContext := git.CollectGitContext(cmd.Context(), SQLMeshProjectDir)
+		output := &sqlmeshv1.IngestExecutionRequest{
+			Command:    []string{"sqlmesh", "run"},
+			GitContext: gitContext,
+		}
+		output.UploaderVersion = strings.TrimSpace(fmt.Sprintf("synq-sqlmesh/%s", build.Version))
+		output.UploaderBuildTime = strings.TrimSpace(build.Time)
+
+		for _, fileArg := range args {
+			err := sqlmesh.CollectAuditLog(output, fileArg)
+			if err != nil {
+				logrus.WithError(err).Error("Failed to collect audit log")
+				os.Exit(1)
+			}
+		}
+
+		if SynqApiToken == "" {
+			logrus.Error("SYNQ_TOKEN environment variable is not set")
+			os.Exit(1)
+		}
+
+		if err := synq.UploadExecutionLog(cmd.Context(), output, SynqApiEndpoint, SynqApiToken); err != nil {
+			logrus.WithError(err).Error("Failed to upload execution log")
+			os.Exit(1)
+		}
+	},
+}
+
 func createFileContentGlobFilter() sqlmesh.GlobFilter {
 	if SQLMeshCollectFileContent {
 		return sqlmesh.NewGlobFilter(SQLMeshCollectFileContentIncludePattern, SQLMeshCollectFileContentExcludePattern)
@@ -151,6 +220,8 @@ func init() {
 	rootCmd.AddCommand(collectCmd)
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(uploadCmd)
+	rootCmd.AddCommand(uploadAuditCmd)
+	rootCmd.AddCommand(uploadRunCmd)
 
 }
 

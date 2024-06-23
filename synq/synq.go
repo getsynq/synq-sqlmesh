@@ -98,6 +98,38 @@ func UploadMetadata(ctx context.Context, output *ingestsqlmeshv1.IngestMetadataR
 	return nil
 }
 
+func UploadExecutionLog(ctx context.Context, output *ingestsqlmeshv1.IngestExecutionRequest, endpoint string, token string) error {
+	parsedEndpoint, err := url.Parse(endpoint)
+	if err != nil {
+		return err
+	}
+
+	oauthTokenSource, err := LongLivedTokenSource(token, parsedEndpoint)
+	if err != nil {
+		panic(err)
+	}
+	creds := credentials.NewTLS(&tls.Config{InsecureSkipVerify: false})
+	opts := []grpc.DialOption{
+		grpc.WithTransportCredentials(creds),
+		grpc.WithPerRPCCredentials(oauthTokenSource),
+		grpc.WithAuthority(parsedEndpoint.Host),
+	}
+
+	conn, err := grpc.DialContext(ctx, grpcEndpoint(parsedEndpoint), opts...)
+	if err != nil {
+		panic(err)
+	}
+	defer conn.Close()
+
+	sqlMeshServiceClient := ingestsqlmeshv1grpc.NewSqlMeshServiceClient(conn)
+	resp, err := sqlMeshServiceClient.IngestExecution(ctx, output)
+	if err != nil {
+		return err
+	}
+	logrus.Infof("Logs uploaded successfully: %s", resp.String())
+	return nil
+}
+
 func grpcEndpoint(endpoint *url.URL) string {
 	port := endpoint.Port()
 	if port == "" {
