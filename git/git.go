@@ -1,19 +1,19 @@
 package git
 
 import (
-	ingestsqlmeshv1 "buf.build/gen/go/getsynq/api/protocolbuffers/go/synq/ingest/sqlmesh/v1"
+	ingestgitv1 "buf.build/gen/go/getsynq/api/protocolbuffers/go/synq/ingest/git/v1"
 	"context"
 	"os/exec"
 	"strings"
 	"time"
 )
 
-func CollectGitContext(ctx context.Context, dir string) *ingestsqlmeshv1.GitContext {
+func CollectGitContext(ctx context.Context, dir string) *ingestgitv1.GitContext {
 	if !commandExists("git") {
 		return nil
 	}
 
-	return &ingestsqlmeshv1.GitContext{
+	return &ingestgitv1.GitContext{
 		CloneUrl:  getCloneUrl(ctx, dir),
 		Branch:    getCurrentBranch(ctx, dir),
 		CommitSha: getCommitSHA(ctx, dir),
