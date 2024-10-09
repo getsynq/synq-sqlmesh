@@ -54,7 +54,7 @@ var collectCmd = &cobra.Command{
 		})
 		if err != nil {
 			fmt.Println(err)
-			os.Exit(1)
+			os.Exit(0)
 		}
 	},
 }
@@ -88,7 +88,7 @@ var uploadCmd = &cobra.Command{
 		})
 		if err != nil {
 			fmt.Println(err)
-			os.Exit(1)
+			os.Exit(0)
 		}
 	},
 }
@@ -111,18 +111,18 @@ var uploadAuditCmd = &cobra.Command{
 			err := sqlmesh.CollectAuditLog(output, fileArg)
 			if err != nil {
 				logrus.WithError(err).Error("Failed to collect audit log")
-				os.Exit(1)
+				os.Exit(0)
 			}
 		}
 
 		if SynqApiToken == "" {
 			logrus.Error("SYNQ_TOKEN environment variable is not set")
-			os.Exit(1)
+			os.Exit(0)
 		}
 
 		if err := synq.UploadExecutionLog(cmd.Context(), output, SynqApiEndpoint, SynqApiToken); err != nil {
 			logrus.WithError(err).Error("Failed to upload execution log")
-			os.Exit(1)
+			os.Exit(0)
 		}
 	},
 }
@@ -145,18 +145,18 @@ var uploadRunCmd = &cobra.Command{
 			err := sqlmesh.CollectAuditLog(output, fileArg)
 			if err != nil {
 				logrus.WithError(err).Error("Failed to collect audit log")
-				os.Exit(1)
+				os.Exit(0)
 			}
 		}
 
 		if SynqApiToken == "" {
 			logrus.Error("SYNQ_TOKEN environment variable is not set")
-			os.Exit(1)
+			os.Exit(0)
 		}
 
 		if err := synq.UploadExecutionLog(cmd.Context(), output, SynqApiEndpoint, SynqApiToken); err != nil {
 			logrus.WithError(err).Error("Failed to upload execution log")
-			os.Exit(1)
+			os.Exit(0)
 		}
 	},
 }

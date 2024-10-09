@@ -17,7 +17,7 @@ func main() {
 
 	if err := cmd.Execute(); err != nil {
 		logrus.WithError(err).Error("Error executing command")
-		os.Exit(1)
+		os.Exit(0)
 	}
 	os.Exit(0)
 }

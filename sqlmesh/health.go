@@ -21,5 +21,5 @@ func WaitForSQLMeshToStart(url url.URL) {
 		time.Sleep(1 * time.Second)
 	}
 	logrus.Error("SQLMesh did not start in time")
-	os.Exit(1)
+	os.Exit(0)
 }

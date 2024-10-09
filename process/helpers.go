@@ -52,12 +52,12 @@ func ExecuteCommand(ctx context.Context, cmdName string, args []string, opts ...
 	stdOutReader, err := cmd.StdoutPipe()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "error creating StdoutPipe for Cmd", err)
-		os.Exit(1)
+		os.Exit(0)
 	}
 	stdErrReader, err := cmd.StderrPipe()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "error creating StderrPipe for Cmd", err)
-		os.Exit(1)
+		os.Exit(0)
 	}
 
 	var outb, errb bytes.Buffer

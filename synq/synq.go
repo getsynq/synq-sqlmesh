@@ -74,7 +74,7 @@ func UploadMetadata(ctx context.Context, output *ingestsqlmeshv1.IngestMetadataR
 
 	oauthTokenSource, err := LongLivedTokenSource(token, parsedEndpoint)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	creds := credentials.NewTLS(&tls.Config{InsecureSkipVerify: false})
 	opts := []grpc.DialOption{
@@ -85,7 +85,7 @@ func UploadMetadata(ctx context.Context, output *ingestsqlmeshv1.IngestMetadataR
 
 	conn, err := grpc.DialContext(ctx, grpcEndpoint(parsedEndpoint), opts...)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	defer conn.Close()
 
@@ -106,7 +106,7 @@ func UploadExecutionLog(ctx context.Context, output *ingestsqlmeshv1.IngestExecu
 
 	oauthTokenSource, err := LongLivedTokenSource(token, parsedEndpoint)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	creds := credentials.NewTLS(&tls.Config{InsecureSkipVerify: false})
 	opts := []grpc.DialOption{
@@ -117,7 +117,7 @@ func UploadExecutionLog(ctx context.Context, output *ingestsqlmeshv1.IngestExecu
 
 	conn, err := grpc.DialContext(ctx, grpcEndpoint(parsedEndpoint), opts...)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	defer conn.Close()
 
