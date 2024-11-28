@@ -28,7 +28,7 @@ export SYNQ_TOKEN=<token>
 synq-sqlmesh upload
 ```
 
-The <token> value is obtained from the SYNQ UI when you click 'create' under SQLMesh integration
+The `token` value is obtained from the SYNQ UI when you click 'create' under SQLMesh integration
 
 ### Advanced usage
 
