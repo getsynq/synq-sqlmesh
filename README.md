@@ -9,7 +9,7 @@ If you have Golang installed, you can build the binary yourself, otherwise downl
 `synq-sqlmesh` uses `web` module of `sqlmesh` to collect metadata. It was tested with versions ` >= 0.96.x`. If you do not have `web` module installed do
 
 ```bash
-pip install 'sqlmesh[web]
+pip install "sqlmesh[web]"
 ```
 
 All commands assume `sqlmesh` command is available in the `PATH`. If that is not the case, `--sqlmesh-cmd` could be used to point synq-sqlmesh to proper location.
