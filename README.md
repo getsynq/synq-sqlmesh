@@ -22,6 +22,7 @@ synq-sqlmesh collect meta.json
 ```
 
 ### Automatic upload to Synq
+Run the following code after you've executed `sqlmesh run`, `sqlmesh audit`, and `sqlmesh test`. For example, you can add it to your Airflow code if you use Airflow for orchestrating.
 
 ```bash
 export SYNQ_TOKEN=<token>
