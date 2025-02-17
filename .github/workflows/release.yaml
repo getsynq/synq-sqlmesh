@@ -33,7 +33,7 @@ jobs:
          synq-sqlmesh-amd64-darwin
          synq-sqlmesh-amd64-linux
          synq-sqlmesh-arm64-linux
-name: release synq-dbt
+name: release synq-sqlmesh
 "on":
   push:
     tags:
