@@ -5,8 +5,8 @@ go 1.22.0
 toolchain go1.23.1
 
 require (
-	buf.build/gen/go/getsynq/api/grpc/go v1.5.1-20241009130006-b2ed3af4a469.1
-	buf.build/gen/go/getsynq/api/protocolbuffers/go v1.35.1-20241009130006-b2ed3af4a469.1
+	buf.build/gen/go/getsynq/api/grpc/go v1.5.1-20250217161302-5f4fe0b1dd1d.2
+	buf.build/gen/go/getsynq/api/protocolbuffers/go v1.36.1-20250217161302-5f4fe0b1dd1d.1
 	github.com/djherbis/times v1.6.0
 	github.com/samber/lo v1.47.0
 	github.com/sirupsen/logrus v1.9.3
@@ -15,11 +15,11 @@ require (
 	github.com/valyala/fasthttp v1.56.0
 	golang.org/x/oauth2 v0.23.0
 	google.golang.org/grpc v1.67.1
-	google.golang.org/protobuf v1.35.1
+	google.golang.org/protobuf v1.36.1
 )
 
 require (
-	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.35.1-20240920164238-5a7b106cbb87.1 // indirect
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.1-20240508200655-46a4cf4ba109.1 // indirect
 	cloud.google.com/go/compute/metadata v0.5.2 // indirect
 	github.com/andybalholm/brotli v1.1.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect

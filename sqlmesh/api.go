@@ -2,8 +2,10 @@ package sqlmesh
 
 import (
 	"encoding/json"
-	"github.com/valyala/fasthttp"
+	"fmt"
 	"net/url"
+
+	"github.com/valyala/fasthttp"
 )
 
 type Api interface {
@@ -45,93 +47,119 @@ type ApiImpl struct {
 }
 
 func (a ApiImpl) Health() (json.RawMessage, error) {
-	statusCode, body, err := a.c.Get(nil, a.url("health"))
+	urlPath := a.buildUrlPath("health")
+	statusCode, body, err := a.c.Get(nil, urlPath)
 	if err != nil {
 		return nil, err
 	}
 	if statusCode != fasthttp.StatusOK {
-		return nil, err
+		return nil, a.createStatusError(urlPath, statusCode, body)
 	}
 	return body, nil
 }
 
 func (a ApiImpl) GetMeta() (json.RawMessage, error) {
-	statusCode, body, err := a.c.Get(nil, a.url("api", "meta"))
+	urlPath := a.buildUrlPath("api", "meta")
+	statusCode, body, err := a.c.Get(nil, urlPath)
 	if err != nil {
 		return nil, err
 	}
 	if statusCode != fasthttp.StatusOK {
-		return nil, err
+		return nil, a.createStatusError(urlPath, statusCode, body)
 	}
 	return body, nil
 }
 
 func (a ApiImpl) GetModels() (json.RawMessage, error) {
-	statusCode, body, err := a.c.Get(nil, a.url("api", "models"))
+	urlPath := a.buildUrlPath("api", "models")
+	statusCode, body, err := a.c.Get(nil, urlPath)
 	if err != nil {
 		return nil, err
 	}
 	if statusCode != fasthttp.StatusOK {
-		return nil, err
+		return nil, a.createStatusError(urlPath, statusCode, body)
 	}
 	return body, nil
 }
 
 func (a ApiImpl) GetModel(modelName string) (json.RawMessage, error) {
-	statusCode, body, err := a.c.Get(nil, a.url("api", "models", modelName))
+	urlPath := a.buildUrlPath("api", "models", modelName)
+	statusCode, body, err := a.c.Get(nil, urlPath)
 	if err != nil {
 		return nil, err
 	}
 	if statusCode != fasthttp.StatusOK {
-		return nil, err
+		return nil, a.createStatusError(urlPath, statusCode, body)
 	}
 	return body, nil
 }
 
 func (a ApiImpl) GetLineage(modelName string) (json.RawMessage, error) {
-	statusCode, body, err := a.c.Get(nil, a.url("api", "lineage", modelName))
+	urlPath := a.buildUrlPath("api", "lineage", modelName)
+	statusCode, body, err := a.c.Get(nil, urlPath)
 	if err != nil {
 		return nil, err
 	}
 	if statusCode != fasthttp.StatusOK {
-		return nil, err
+		return nil, a.createStatusError(urlPath, statusCode, body)
 	}
 	return body, nil
 }
 
 func (a ApiImpl) GetEnvironments() (json.RawMessage, error) {
-	statusCode, body, err := a.c.Get(nil, a.url("api", "environments"))
+	urlPath := a.buildUrlPath("api", "environments")
+	statusCode, body, err := a.c.Get(nil, urlPath)
 	if err != nil {
 		return nil, err
 	}
 	if statusCode != fasthttp.StatusOK {
-		return nil, err
+		return nil, a.createStatusError(urlPath, statusCode, body)
 	}
 	return body, nil
 }
 
 func (a ApiImpl) GetFiles() (json.RawMessage, error) {
-	statusCode, body, err := a.c.Get(nil, a.url("api", "files"))
+	urlPath := a.buildUrlPath("api", "files")
+	statusCode, body, err := a.c.Get(nil, urlPath)
 	if err != nil {
 		return nil, err
 	}
 	if statusCode != fasthttp.StatusOK {
-		return nil, err
+		return nil, a.createStatusError(urlPath, statusCode, body)
 	}
 	return body, nil
 }
 
 func (a ApiImpl) GetFileContent(filePath string) (json.RawMessage, error) {
-	statusCode, body, err := a.c.Get(nil, a.url("api", "files", filePath))
+	urlPath := a.buildUrlPath("api", "files", filePath)
+	statusCode, body, err := a.c.Get(nil, urlPath)
 	if err != nil {
 		return nil, err
 	}
 	if statusCode != fasthttp.StatusOK {
-		return nil, err
+		return nil, a.createStatusError(urlPath, statusCode, body)
 	}
 	return body, nil
 }
 
-func (a ApiImpl) url(path ...string) string {
+func (a ApiImpl) buildUrlPath(path ...string) string {
 	return a.baseUrl.JoinPath(path...).String()
+}
+
+type SQLMeshApiError struct {
+	UrlPath string `json:"path"`
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
+func (s *SQLMeshApiError) Error() string {
+	return fmt.Sprintf("SQLMesh UI API error at %s (%d): %s ", s.UrlPath, s.Code, s.Message)
+}
+
+func (a ApiImpl) createStatusError(urlPath string, code int, body []byte) error {
+	return &SQLMeshApiError{
+		UrlPath: urlPath,
+		Code:    code,
+		Message: string(body),
+	}
 }

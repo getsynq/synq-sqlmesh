@@ -1,9 +1,13 @@
 package cmd
 
 import (
-	sqlmeshv1 "buf.build/gen/go/getsynq/api/protocolbuffers/go/synq/ingest/sqlmesh/v1"
 	"context"
 	"fmt"
+	"net/url"
+	"os"
+	"strings"
+
+	sqlmeshv1 "buf.build/gen/go/getsynq/api/protocolbuffers/go/synq/ingest/sqlmesh/v1"
 	"github.com/getsynq/synq-sqlmesh/build"
 	"github.com/getsynq/synq-sqlmesh/git"
 	"github.com/getsynq/synq-sqlmesh/process"
@@ -11,14 +15,11 @@ import (
 	"github.com/getsynq/synq-sqlmesh/synq"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"net/url"
-	"os"
-	"strings"
 )
 
 var rootCmd = &cobra.Command{
 	Use:   "synq-sqlmesh",
-	Short: "Small utility to collect SQLMesh metadata information and upload it to Synq",
+	Short: "Small utility to collect SQLMesh metadata information and upload it to SYNQ",
 }
 
 var versionCmd = &cobra.Command{
@@ -61,7 +62,7 @@ var collectCmd = &cobra.Command{
 
 var uploadCmd = &cobra.Command{
 	Use:   "upload",
-	Short: "Collect metadata information from SQLMesh and send to Synq API",
+	Short: "Collect metadata information from SQLMesh and send to SYNQ API",
 	Args:  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
 
@@ -95,7 +96,7 @@ var uploadCmd = &cobra.Command{
 
 var uploadAuditCmd = &cobra.Command{
 	Use:   "upload_audit",
-	Short: "Sends to Synq output of `audit` command",
+	Short: "Sends to SYNQ output of `audit` command",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 
@@ -129,7 +130,7 @@ var uploadAuditCmd = &cobra.Command{
 
 var uploadRunCmd = &cobra.Command{
 	Use:   "upload_run",
-	Short: "Sends to Synq output of `run` command",
+	Short: "Sends to SYNQ output of `run` command",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 
@@ -206,8 +207,8 @@ var SQLMeshCollectFileContentIncludePattern = "external_models.yaml,models/**.sq
 var SQLMeshCollectFileContentExcludePattern = "*.log"
 
 func init() {
-	rootCmd.PersistentFlags().StringVar(&SynqApiToken, "synq-token", SynqApiToken, "Synq API token")
-	rootCmd.PersistentFlags().StringVar(&SynqApiEndpoint, "synq-endpoint", SynqApiEndpoint, "Synq API endpoint URL")
+	rootCmd.PersistentFlags().StringVar(&SynqApiToken, "synq-token", SynqApiToken, "SYNQ API token")
+	rootCmd.PersistentFlags().StringVar(&SynqApiEndpoint, "synq-endpoint", SynqApiEndpoint, "SYNQ API endpoint URL")
 	rootCmd.PersistentFlags().StringVar(&SQLMesh, "sqlmesh-cmd", SQLMesh, "SQLMesh launcher location")
 	rootCmd.PersistentFlags().StringVar(&SQLMeshProjectDir, "sqlmesh-project-dir", SQLMeshProjectDir, "Location of SQLMesh project directory")
 	rootCmd.PersistentFlags().BoolVar(&SQLMeshUiStart, "sqlmesh-ui-start", SQLMeshUiStart, "Launch and control SQLMesh UI process automatically")

@@ -1,16 +1,18 @@
 package sqlmesh
 
 import (
-	ingestsqlmeshv1 "buf.build/gen/go/getsynq/api/protocolbuffers/go/synq/ingest/sqlmesh/v1"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/getsynq/synq-sqlmesh/build"
-	"github.com/sirupsen/logrus"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"net/url"
 	"path/filepath"
 	"strings"
+
+	ingestsqlmeshv1 "buf.build/gen/go/getsynq/api/protocolbuffers/go/synq/ingest/sqlmesh/v1"
+	"github.com/getsynq/synq-sqlmesh/build"
+	"github.com/samber/lo"
+	"github.com/sirupsen/logrus"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func NewSQLMeshMetadata() *ingestsqlmeshv1.IngestMetadataRequest {
@@ -32,19 +34,19 @@ func CollectMetadata(url url.URL, fileContentGlobFilter GlobFilter) (*ingestsqlm
 
 	var err error
 	res.ApiMeta, err = api.GetMeta()
-	logError(err, "Failed to get meta information")
+	processErr(res, err, "Failed to get meta information")
 	res.Models, err = api.GetModels()
-	logError(err, "Failed to get models information")
+	processErr(res, err, "Failed to get models information")
 	modelNames, err := ModelNames(res.Models)
-	logError(err, "Failed to get model names")
+	processErr(res, err, "Failed to get model names")
 	for _, modelName := range modelNames {
 		res.ModelDetails[modelName], err = api.GetModel(modelName)
-		logError(err, "Failed to get model details")
+		processErr(res, err, "Failed to get model details of %s", modelName)
 		res.ModelLineage[modelName], err = api.GetLineage(modelName)
-		logError(err, "Failed to get model lineage")
+		processErr(res, err, "Failed to get model lineage of %s", modelName)
 	}
 	res.Files, err = api.GetFiles()
-	logError(err, "Failed to get files information")
+	processErr(res, err, "Failed to get files information")
 
 	if len(res.Files) > 0 {
 		dir := &Directory{}
@@ -54,11 +56,11 @@ func CollectMetadata(url url.URL, fileContentGlobFilter GlobFilter) (*ingestsqlm
 		} else {
 			filesToProcess, err := collectFilesForProcessing(res.Files, fileContentGlobFilter)
 			if err != nil {
-				logError(err, "Failed to collect files for processing")
+				processErr(res, err, "Failed to collect files for processing")
 			} else {
 				for _, fileToProcess := range filesToProcess {
 					fileContent, err := api.GetFileContent(fileToProcess)
-					logError(err, "Failed to get file content")
+					processErr(res, err, "Failed to get file content %s", fileToProcess)
 					if err == nil {
 						res.FileContent[fileToProcess] = fileContent
 					}
@@ -68,9 +70,29 @@ func CollectMetadata(url url.URL, fileContentGlobFilter GlobFilter) (*ingestsqlm
 	}
 
 	res.Environments, err = api.GetEnvironments()
-	logError(err, "Failed to get environments information")
+	processErr(res, err, "Failed to get environments information")
 
 	return res, nil
+}
+
+func processErr(res *ingestsqlmeshv1.IngestMetadataRequest, err error, msg string, args ...interface{}) {
+	if err == nil {
+		return
+	}
+	var sqlMeshApiErr *SQLMeshApiError
+	if errors.As(err, &sqlMeshApiErr) {
+		res.Errors = append(res.Errors, &ingestsqlmeshv1.IngestMetadataRequest_Error{
+			Path:    lo.ToPtr(sqlMeshApiErr.UrlPath),
+			Code:    lo.ToPtr(int64(sqlMeshApiErr.Code)),
+			Message: sqlMeshApiErr.Message,
+		})
+	} else {
+		res.Errors = append(res.Errors, &ingestsqlmeshv1.IngestMetadataRequest_Error{
+			Message: err.Error(),
+		})
+	}
+
+	logError(err, msg, args...)
 }
 
 func collectFilesForProcessing(files []byte, fileContentGlobFilter GlobFilter) ([]string, error) {
@@ -107,9 +129,10 @@ func collectFilesForProcessing(files []byte, fileContentGlobFilter GlobFilter) (
 	return filesToGetContent, nil
 }
 
-func logError(err error, msg string) {
+func logError(err error, msg string, args ...interface{}) {
 	if err != nil {
-		logrus.WithError(err).Error(msg)
+		logrus.Errorf(msg, args...)
+		logrus.Error(err)
 	}
 }
 

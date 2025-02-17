@@ -1,19 +1,21 @@
 package synq
 
 import (
-	ingestsqlmeshv1grpc "buf.build/gen/go/getsynq/api/grpc/go/synq/ingest/sqlmesh/v1/sqlmeshv1grpc"
-	ingestsqlmeshv1 "buf.build/gen/go/getsynq/api/protocolbuffers/go/synq/ingest/sqlmesh/v1"
 	"context"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"net/url"
+	"os"
+	"time"
+
+	ingestsqlmeshv1grpc "buf.build/gen/go/getsynq/api/grpc/go/synq/ingest/sqlmesh/v1/sqlmeshv1grpc"
+	ingestsqlmeshv1 "buf.build/gen/go/getsynq/api/protocolbuffers/go/synq/ingest/sqlmesh/v1"
 	"github.com/samber/lo"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
-	"net/url"
-	"os"
-	"time"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 type GitContextDump struct {
@@ -34,6 +36,7 @@ type IngestMetadataRequestDump struct {
 	UploaderBuildTime string                     `json:"uploader_build_time"`
 	StateAt           time.Time                  `json:"state_at"`
 	GitContext        *GitContextDump            `json:"git_context"`
+	Errors            []json.RawMessage          `json:"errors"`
 }
 
 func DumpMetadata(output *ingestsqlmeshv1.IngestMetadataRequest, filename string) error {
@@ -48,6 +51,9 @@ func DumpMetadata(output *ingestsqlmeshv1.IngestMetadataRequest, filename string
 		UploaderVersion:   output.UploaderVersion,
 		UploaderBuildTime: output.UploaderBuildTime,
 		StateAt:           output.StateAt.AsTime(),
+		Errors: lo.Map(output.Errors, func(item *ingestsqlmeshv1.IngestMetadataRequest_Error, index int) json.RawMessage {
+			return json.RawMessage(protojson.Format(item))
+		}),
 	}
 
 	if output.GitContext != nil {
