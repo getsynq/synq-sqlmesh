@@ -203,7 +203,7 @@ var SQLMeshUiStart bool = true
 var SQLMeshUiHost string = "localhost"
 var SQLMeshUiPort int = 8080
 var SQLMeshCollectFileContent = false
-var SQLMeshCollectFileContentIncludePattern = "external_models.yaml,models/**.sql,models/**.py,audits/**.sql,tests/**.yaml"
+var SQLMeshCollectFileContentIncludePattern = "external_models.yaml,models/**/*.sql,models/**/*.py,audits/**/*.sql,tests/**/*.yaml"
 var SQLMeshCollectFileContentExcludePattern = "*.log"
 
 func init() {

@@ -3,6 +3,8 @@ package sqlmesh
 import (
 	"path/filepath"
 	"strings"
+
+	doublestart "github.com/bmatcuk/doublestar/v4"
 )
 
 type GlobFilter interface {
@@ -39,10 +41,9 @@ type GlobFilterImpl struct {
 }
 
 func (g GlobFilterImpl) Match(s string) (bool, error) {
-
 	match := false
 	for _, pattern := range g.includePatterns {
-		ok, err := filepath.Match(pattern, s)
+		ok, err := doublestart.Match(pattern, s)
 		if err != nil {
 			return false, err
 		}

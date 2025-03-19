@@ -7,6 +7,7 @@ toolchain go1.23.1
 require (
 	buf.build/gen/go/getsynq/api/grpc/go v1.5.1-20250217161302-5f4fe0b1dd1d.2
 	buf.build/gen/go/getsynq/api/protocolbuffers/go v1.36.1-20250217161302-5f4fe0b1dd1d.1
+	github.com/bmatcuk/doublestar/v4 v4.8.1
 	github.com/djherbis/times v1.6.0
 	github.com/samber/lo v1.47.0
 	github.com/sirupsen/logrus v1.9.3
