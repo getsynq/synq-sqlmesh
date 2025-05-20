@@ -42,7 +42,7 @@ sqlmesh audit | tee audit.log
 synq-sqlmesh upload_audit audit.log
 
 sqlmesh run | tee run.log
-synq-sqlmesh upload_audit run.log
+synq-sqlmesh upload_run run.log
 
 ```
 
