@@ -1,6 +1,6 @@
 # synq-sqlmesh
 
-synq-sqlmesh is a client application to integrate locally running SQLMesh to Synq
+synq-sqlmesh is a client application to integrate locally running SQLMesh to SYNQ
 
 ## How to use
 
@@ -21,7 +21,7 @@ cd sqlmesh-project
 synq-sqlmesh collect meta.json
 ```
 
-### Automatic upload to Synq
+### Automatic upload to SYNQ
 
 Run the following code after you've executed `sqlmesh run`, `sqlmesh audit`, and `sqlmesh test`. For example, you can add it to your Airflow code if you use Airflow for orchestrating.
 
@@ -104,8 +104,8 @@ If you encounter issues using `synq-sqlmesh`, check the following common problem
 
 **2. `SYNQ_TOKEN` not set or invalid**
 
-- The `SYNQ_TOKEN` environment variable is required for uploading data to Synq.
-- If you see an error like `SYNQ_TOKEN environment variable is not set`, obtain a token from the Synq UI and set it:
+- The `SYNQ_TOKEN` environment variable is required for uploading data to SYNQ.
+- If you see an error like `SYNQ_TOKEN environment variable is not set`, obtain a token from the SYNQ UI and set it:
   ```bash
   export SYNQ_TOKEN=<your_token>
   ```
@@ -118,8 +118,8 @@ If you encounter issues using `synq-sqlmesh`, check the following common problem
 
 **4. Network or API errors**
 
-- If uploading fails, ensure you have network connectivity and the Synq API endpoint is reachable (`https://developer.synq.io/` by default).
-- If you are behind a proxy or firewall, ensure it allows outbound connections to the Synq API.
+- If uploading fails, ensure you have network connectivity and the SYNQ API endpoint is reachable (`https://developer.synq.io/` by default).
+- If you are behind a proxy or firewall, ensure it allows outbound connections to the SYNQ API.
 
 **5. File content not collected as expected**
 
