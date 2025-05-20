@@ -6,7 +6,7 @@ synq-sqlmesh is a client application to integrate locally running SQLMesh to Syn
 
 If you have Golang installed, you can build the binary yourself, otherwise download appropriate binary from the [releases screen](https://github.com/getsynq/synq-sqlmesh/releases) (darwin == macOS).
 
-`synq-sqlmesh` uses `web` module of `sqlmesh` to collect metadata. It was tested with versions ` >= 0.96.x`. If you do not have `web` module installed do
+`synq-sqlmesh` uses `web` module of `sqlmesh` to collect metadata. It was tested with versions `>= 0.96.x`. If you do not have `web` module installed do
 
 ```bash
 pip install "sqlmesh[web]"
@@ -89,3 +89,48 @@ go generate
 go build -o synq-sqlmesh
 ./synq-sqlmesh version
 ```
+
+## Troubleshooting
+
+If you encounter issues using `synq-sqlmesh`, check the following common problems:
+
+**1. `sqlmesh` or `sqlmesh[web]` not installed**
+
+- Ensure you have installed SQLMesh with the web module:
+  ```bash
+  pip install "sqlmesh[web]"
+  ```
+- Make sure the `sqlmesh` command is available in your `PATH`, or use the `--sqlmesh-cmd` flag to specify its location.
+
+**2. `SYNQ_TOKEN` not set or invalid**
+
+- The `SYNQ_TOKEN` environment variable is required for uploading data to Synq.
+- If you see an error like `SYNQ_TOKEN environment variable is not set`, obtain a token from the Synq UI and set it:
+  ```bash
+  export SYNQ_TOKEN=<your_token>
+  ```
+
+**3. SQLMesh UI fails to start or connect**
+
+- The tool tries to start the SQLMesh UI by default. If it fails to connect, you may see errors like `SQLMesh did not start in time`.
+- Check that you can run `sqlmesh ui` manually and access it at the configured host/port (default: `localhost:8080`).
+- You can disable automatic UI startup with `--sqlmesh-ui-start=false` if you want to manage the process yourself.
+
+**4. Network or API errors**
+
+- If uploading fails, ensure you have network connectivity and the Synq API endpoint is reachable (`https://developer.synq.io/` by default).
+- If you are behind a proxy or firewall, ensure it allows outbound connections to the Synq API.
+
+**5. File content not collected as expected**
+
+- By default, only certain file patterns are included. Use `--sqlmesh-collect-file-content` and adjust `--sqlmesh-collect-file-content-include`/`--sqlmesh-collect-file-content-exclude` as needed.
+- If you see errors about file patterns, check your glob syntax.
+
+**6. General errors**
+
+- Most errors are printed to the console. If you see a message like `Failed to get meta information` or `Failed to upload execution log`, check the logs for more details.
+- Run with increased verbosity (if supported) or check the logs for more context.
+
+**7. Version compatibility**
+
+- This tool was tested with SQLMesh versions `>= 0.96.x`. If you use a different version, compatibility is not guaranteed.
