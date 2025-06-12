@@ -1,12 +1,13 @@
 package sqlmesh
 
 import (
-	sqlmeshv1 "buf.build/gen/go/getsynq/api/protocolbuffers/go/synq/ingest/sqlmesh/v1"
 	"fmt"
-	"github.com/djherbis/times"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"os"
 	"time"
+
+	sqlmeshv1 "buf.build/gen/go/getsynq/api/protocolbuffers/go/synq/ingest/sqlmesh/v1"
+	"github.com/djherbis/times"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // CollectExecutionLog reads a run log file produced by `sqlmesh run` or
@@ -38,10 +39,4 @@ func CollectExecutionLog(output *sqlmeshv1.IngestExecutionRequest, filename stri
 	output.FinishedAt = timestamppb.New(finishedAt)
 
 	return nil
-}
-
-// CollectAuditLog is deprecated and provided for backwards compatibility.
-// Use CollectExecutionLog instead.
-func CollectAuditLog(output *sqlmeshv1.IngestExecutionRequest, filename string) error {
-	return CollectExecutionLog(output, filename)
 }
