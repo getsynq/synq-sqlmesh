@@ -109,9 +109,9 @@ var uploadAuditCmd = &cobra.Command{
 		output.UploaderBuildTime = strings.TrimSpace(build.Time)
 
 		for _, fileArg := range args {
-			err := sqlmesh.CollectAuditLog(output, fileArg)
+			err := sqlmesh.CollectExecutionLog(output, fileArg)
 			if err != nil {
-				logrus.WithError(err).Error("Failed to collect audit log")
+				logrus.WithError(err).WithField("path", fileArg).Error("Failed to collect audit log")
 				os.Exit(0)
 			}
 		}
@@ -143,9 +143,9 @@ var uploadRunCmd = &cobra.Command{
 		output.UploaderBuildTime = strings.TrimSpace(build.Time)
 
 		for _, fileArg := range args {
-			err := sqlmesh.CollectAuditLog(output, fileArg)
+			err := sqlmesh.CollectExecutionLog(output, fileArg)
 			if err != nil {
-				logrus.WithError(err).Error("Failed to collect audit log")
+				logrus.WithError(err).WithField("path", fileArg).Error("Failed to collect run log")
 				os.Exit(0)
 			}
 		}
