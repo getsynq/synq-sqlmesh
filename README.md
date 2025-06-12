@@ -46,6 +46,11 @@ synq-sqlmesh upload_run run.log
 
 ```
 
+If `upload_run` cannot find the specified log file, the command will report
+`Failed to collect run log` and show the missing file path. Ensure the path
+to `run.log` is correct in your CI/CD pipeline. `upload_audit` logs the
+missing audit file path in the same way.
+
 ### Advanced usage
 
 ```bash
